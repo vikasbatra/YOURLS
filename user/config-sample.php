@@ -26,6 +26,25 @@ define( 'YOURLS_DB_HOST', 'localhost' );
 /** MySQL tables prefix */
 define( 'YOURLS_DB_PREFIX', 'yourls_' );
 
+
+/*
+ ** Slave DB Server Config
+ */
+ 
+/** MySQL database username */
+define( 'YOURLS_SLAVE_DB_USER', 'your db user name' );
+
+/** MySQL database password */
+define( 'YOURLS_SLAVE_DB_PASS', 'your db password' );
+
+/** The name of the database for YOURLS */
+define( 'YOURLS_SLAVE_DB_NAME', 'yourls' );
+
+/** MySQL hostname.
+ ** If using a non standard port, specify it like 'hostname:port', eg. 'localhost:9999' or '127.0.0.1:666' */
+define( 'YOURLS_SLAVE_DB_HOST', 'localhost' );
+ 
+
 /*
  ** Site options
  */
