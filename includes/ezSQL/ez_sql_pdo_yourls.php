@@ -25,7 +25,7 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 		// Turn on track errors 
 		ini_set('track_errors',1);
 		
-		$this->connect( $dsn, $dbuser, $dbpassword );
+		//$this->connect( $dsn, $dbuser, $dbpassword );
 		
 	}
 
@@ -47,6 +47,41 @@ class ezSQL_pdo_YOURLS extends ezSQL_pdo {
 	 */
 	function query( $query ) {
 	
+		$select_query = strtolower(trim(current(explode(' ', $query))));
+
+		// If it is a select query on URL (YOURLS_DB_TABLE_URL) table, send to SLAVE
+		if ($select_query == 'select' && 
+		    (strstr(strtolower($query), 'from `'.YOURLS_DB_TABLE_URL.'`') != '' || 
+		     strstr(strtolower($query), 'from '.YOURLS_DB_TABLE_URL) != '')) {
+
+			$dbuser = YOURLS_SLAVE_DB_USER;
+			$dbpassword = YOURLS_SLAVE_DB_PASS;
+			$dbname = YOURLS_SLAVE_DB_NAME;
+			$dbhost = YOURLS_SLAVE_DB_HOST;
+		}
+		else {
+			$dbuser = YOURLS_DB_USER;
+			$dbpassword = YOURLS_DB_PASS;
+			$dbname = YOURLS_DB_NAME;
+			$dbhost = YOURLS_DB_HOST;
+		}
+
+
+		$this->dbuser = $dbuser;
+		$this->dbpassword = $dbpassword;
+		$this->dbname = $dbname;
+		// Get custom port if any
+		if ( false !== strpos( $dbhost, ':' ) ) {
+			list( $dbhost, $dbport ) = explode( ':', $dbhost );
+			$dbhost = sprintf( '%1$s;port=%2$d', $dbhost, $dbport );
+		}
+		$this->dbhost = $dbhost;
+		// $this->encoding = $encoding;
+		$dsn = 'mysql:host=' . $dbhost . ';dbname=' . $dbname ;
+		$this->dsn = $dsn;
+
+		$this->connect( $dsn, $dbuser, $dbpassword );
+
 		// Keep history of all queries
 		$this->debug_log[] = $query;
 
